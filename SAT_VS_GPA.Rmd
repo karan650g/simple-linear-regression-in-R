@@ -1,0 +1,65 @@
+```{r}
+#import data
+data = read.csv('SAT_VS_GPA.csv')
+head(data)
+```
+```{r}
+library(caTools)
+set.seed(25)
+
+colnames(data)<- c("SAT","GPA")
+head(data)
+```
+
+```{r}
+#scatter plot to get inference about the data
+library(ggplot2)
+ggplot() +
+  geom_point(aes(x = data$SAT, y = data$GPA),
+             colour = 'darkgreen')+
+  ggtitle('SAT vs GPA') +
+  xlab('GPA') +
+  ylab('SAT score')
+```
+```{r}
+#split the data into test set and training set
+split = sample.split(data$GPA, SplitRatio = 0.8)
+training_set = subset(data, split == TRUE)
+test_set = subset(data, split == FALSE)
+```
+```{r}
+#using the linear model
+regressor = lm(formula =  GPA ~ SAT,
+               data = training_set)
+
+# Predicting the Test set results
+y_pred = predict(regressor, newdata = test_set)
+
+```
+
+```{r}
+#plotting the line on train set
+library(ggplot2)
+ggplot() +
+  geom_point(aes(x = training_set$SAT, y = training_set$GPA),
+             colour = 'red')+
+  geom_line(aes(x = training_set$SAT, y = predict(regressor, newdata = training_set)),
+            colour = 'black')+
+  ggtitle('SAT vs GPA') +
+  xlab('GPA') +
+  ylab('SAT score')
+```
+
+```{r}
+#plot the line on test set to evaluate the model
+library(ggplot2)
+ggplot() +
+  geom_point(aes(x = test_set$SAT, y = test_set$GPA),
+             colour = 'red') +
+  geom_line(aes(x = training_set$SAT, y = predict(regressor, newdata = training_set)),
+            colour = 'black') +
+  ggtitle('SAT VS GPA') +
+  xlab('GPA') +
+  ylab('SAT')
+```
+
